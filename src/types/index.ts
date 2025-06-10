@@ -41,7 +41,15 @@ export type PlayerData = {
     username : string;
 }
 
+export type QuestionData = {
+    id : string,
+    text : string,
+    questionStartTime : string,
+    timeLimitSeconds : number,
+    options : Option[]
+}
 
 export type EventMessage = 
     | {event:  "PLAYER_JOINED", data: PlayerData}
     | {event:  "PLAYER_LEFT", data: PlayerData}
+    | {event:  "GAME_STARTED", data: QuestionData}

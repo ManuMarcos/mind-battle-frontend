@@ -18,10 +18,10 @@ import {
 import { Input } from "@/components/ui/input"
 
 const FormSchema = z.object({
-  username: z.string().min(4, {
+  enteredUsername: z.string().min(4, {
     message: "El nombre de usuario debe tener por lo menos 4 caracteres.",
   }),
-  pin : z.string().min(6, {
+  enteredPin : z.string().min(6, {
     message: "El pin debe tener por lo menos 6 caracteres"
   })
 })
@@ -30,8 +30,8 @@ export const JoinGameForm = ({ onSubmit }: { onSubmit: (data: z.infer<typeof For
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
-      pin : ""
+      enteredUsername: "",
+      enteredPin : ""
     },
   })
 
@@ -41,7 +41,7 @@ export const JoinGameForm = ({ onSubmit }: { onSubmit: (data: z.infer<typeof For
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
         <FormField
           control={form.control}
-          name="username"
+          name="enteredUsername"
           render={({ field }) => (
             <FormItem>
               <FormControl>
@@ -53,7 +53,7 @@ export const JoinGameForm = ({ onSubmit }: { onSubmit: (data: z.infer<typeof For
         />
         <FormField
           control={form.control}
-          name="pin"
+          name="enteredPin"
           render={({ field }) => (
             <FormItem>
               <FormControl>

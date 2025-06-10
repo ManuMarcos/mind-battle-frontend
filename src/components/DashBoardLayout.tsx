@@ -8,7 +8,7 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
       </main>
 
       <footer className="text-center py-2 text-sm text-gray-700">
-        Made with Love by ManuMarcoss
+        Made with ❤️ by ManuMarcos
       </footer>
     </div>
   );

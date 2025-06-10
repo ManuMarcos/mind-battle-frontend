@@ -3,26 +3,34 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { useNavigate } from "react-router-dom";
 
-export const LandingPage = () => {
+export const JoinPage = () => {
   const navigate = useNavigate();
 
-  const handleJoinGame = async(formData : {username : string, pin : string}) => {
+  const handleJoinGame = async(formData : {enteredUsername : string, enteredPin : string}) => {
     try{
-      const response = await fetch(`http://localhost:8084/api/sessions/${formData.pin}/join`, {
+      const response = await fetch(`http://localhost:8084/api/sessions/${formData.enteredPin}/join`, {
         method: "POST",
         headers: {
           "Content-Type" : "application/json"
         },
-        body: JSON.stringify({username : formData.username})
+        body: JSON.stringify({username : formData.enteredUsername})
       })
-      const username = formData.username;
       
       if(!response.ok){
         throw new Error("No se pudo unir a la partida");
       }
       const gameSession = await response.json();
 
-      navigate(`/lobby/${gameSession.id}`, {state : {username}});
+      sessionStorage.setItem("username", formData.enteredUsername);
+      sessionStorage.setItem("gameSessionId", gameSession.id);
+
+
+      navigate(`/game`);
+      /*, {state : {
+        username : formData.enteredUsername,
+        gameSessionId : gameSession.id
+      }*/
+      
     }
     catch(err){
       console.log("Error al unirse: ", err);
@@ -33,7 +41,7 @@ export const LandingPage = () => {
 
 
   return (
-    <div className="flex flex-col  lg:w-1/5 space-y-3">
+    <div className="flex flex-col  w-1/2 lg:w-2/7 space-y-3">
       <div className="flex flex-row justify-center ">
         <Logo className="w-50"/>
       </div>
