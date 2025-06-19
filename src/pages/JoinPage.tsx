@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 export const JoinPage = () => {
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
   const handleJoinGame = async(formData : {enteredUsername : string, enteredPin : string}) => {
     try{
-      const response = await fetch(`http://localhost:8084/api/sessions/${formData.enteredPin}/join`, {
+      const response = await fetch(`${API_BASE_URL}/api/sessions/${formData.enteredPin}/join`, {
         method: "POST",
         headers: {
           "Content-Type" : "application/json"
@@ -61,6 +63,9 @@ export const JoinPage = () => {
       </Button>
       <Button  className="w-1/2">
         Crear Partida
+      </Button>
+      <Button onClick={() => navigate(`/quizzes`)} className="w-1/2">
+        Ver Quizzes
       </Button>
       </div>
     </div>

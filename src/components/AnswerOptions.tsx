@@ -8,6 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { AnswerButton } from "./AnswerButton";
+import { useWebSocket } from "@/context/WebSocketProvider";
 
 const icons = [
   { icon: faHeart, color: "bg-red-500" },
@@ -24,13 +25,16 @@ type AnswerProps = {
 
 export const AnswerOptions = ({
   options,
+  onAnswerSelected,
   revealCorrectAnswer,
 }: AnswerProps) => {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [showCorrect, setShowCorrect] = useState(false);
+  const {sendMessage} = useWebSocket()
 
   const handleOptionClick = (optionId: string) => {
     setSelectedOptionId(optionId);
+    onAnswerSelected(optionId);
   };
 
   useEffect(() => {
@@ -74,7 +78,7 @@ export const AnswerOptions = ({
             showCorrect={showCorrect}
             icon={icons[index].icon}
             color={icons[index].color}
-            onSelect={(id) => setSelectedOptionId(id)}
+            onSelect={(id) => handleOptionClick(id)}
           />
         );
       })}

@@ -1,4 +1,10 @@
-import type { EventMessage, GameSession, PlayerData, QuestionData } from "@/types";
+import type {
+  AnswerReceived,
+  EventMessage,
+  GameSession,
+  PlayerData,
+  QuestionData,
+} from "@/types";
 import { Client, type IMessage } from "@stomp/stompjs";
 import { useEffect, useRef, useState } from "react";
 import { Navigate, useLocation, useParams } from "react-router-dom";
@@ -7,6 +13,8 @@ import { LobbyPage } from "./LobbyPage";
 import { GamePage } from "./GamePage";
 import { DashboardLayout } from "@/components/DashBoardLayout";
 import { CenteredLayout } from "@/components/CenteredLayout";
+import { useWebSocket } from "@/context/WebSocketProvider";
+import { WebSocketRoutes } from "@/constants/webSocketRoutes";
 
 export const GameFlowManager = () => {
   const location = useLocation();
@@ -14,12 +22,12 @@ export const GameFlowManager = () => {
   const [playerUsernames, setPlayerUsernames] = useState<string[]>([]);
   const [gameSession, setGameSession] = useState<GameSession | null>(null);
   const [questionData, setQuestionData] = useState<QuestionData | null>(null);
+  const [numberOfAnswers, setNumberOfAnswers] = useState<number>(0);
   const username = sessionStorage.getItem("username");
   const gameSessionId = sessionStorage.getItem("gameSessionId");
   const clientRef = useRef<Client | null>(null);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-  console.log("state", location.state);
+  const { connected, subscribe, sendMessage } = useWebSocket();
 
   if (!username || !gameSessionId) {
     return <Navigate to="/" replace />;
@@ -34,60 +42,50 @@ export const GameFlowManager = () => {
     });
   };
 
-  const handlePlayerLeftEvent = (data : PlayerData) => {
+  const handlePlayerLeftEvent = (data: PlayerData) => {
     const newUsername = data.username;
     setPlayerUsernames((prev) =>
       prev.filter((username) => username !== newUsername)
     );
   };
 
-  const handleGameStartedEvent = (data : QuestionData) => {
+  const handleGameStartedEvent = (data: QuestionData) => {
     setQuestionData(data);
     setStage("game");
     console.log("QuestionData: " + JSON.stringify(data));
-}
-
-  const connectToWebSocket = () => {
-    const socket = new SockJS("http://localhost:8084/games-ws");
-    const client = new Client({
-      webSocketFactory: () => socket,
-      onConnect: () => {
-        console.log("Conectado al websocket");
-
-        client.subscribe(
-          `/topic/session/${gameSessionId}`,
-          (message: IMessage) => {
-            const response: EventMessage = JSON.parse(message.body);
-            console.log(response);
-            switch (response.event) {
-              case "PLAYER_JOINED":
-                console.log("player_joined");
-                handlePlayerJoinedEvent(response.data);
-                break;
-              case "PLAYER_LEFT":
-                handlePlayerLeftEvent(response.data);
-                break;
-              case "GAME_STARTED":
-                handleGameStartedEvent(response.data);
-                break;
-            }
-          }
-        );
-
-        client.publish({
-          destination: `/app/session/${gameSessionId}/join`,
-          body: JSON.stringify({ username }),
-        });
-
-        console.log(`Suscribed to /topic/session/${gameSessionId} successfuly`);
-      },
-      onStompError: (frame) => {
-        console.log("STOMP Error:", frame);
-      },
-    });
-    client.activate();
-    clientRef.current = client;
   };
+
+  const onStart = async () => {
+    try {
+      const jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2ODRjOGUyNTA3Y2NlYWJiOWEwZmI1ZWQiLCJpYXQiOjE3NTAzNTQyNDIsImV4cCI6MTc1MDM2ODY0Mn0.tTr-d4BXbLDhYx7YyBjOkOO1kBhZwoRXAdHr70Cgv4U"
+      const response = await fetch(
+        `${API_BASE_URL}/api/sessions/${gameSessionId}/start`,
+        {
+          method: "POST",
+          headers: {
+            "Authorization" : `Bearer ${jwtToken}`,
+            "Content-Type": "application/json",
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al iniciar partida");
+      }
+    } catch (err) {
+      console.log("Ocurrio un error: ", err);
+    }
+    console.log("start")
+  }
+
+
+  const handleAnswerReceived = (data: AnswerReceived) => {
+    setNumberOfAnswers(data.currentCount);
+  };
+
+  const handleNextQuestion = (data : QuestionData) => {
+    setQuestionData(data);
+  }
 
   const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     event.preventDefault();
@@ -122,12 +120,35 @@ export const GameFlowManager = () => {
 
   useEffect(() => {
     getGameData();
-    connectToWebSocket();
+    if(connected){
+      sendMessage(
+        WebSocketRoutes.APP_JOIN_SESSION(gameSessionId),
+        { username : username }
+      );
+      subscribe(WebSocketRoutes.TOPIC_SESSION(gameSessionId), (message: IMessage) => {
+        const response: EventMessage = JSON.parse(message.body);
+        console.log(response);
+        switch (response.event) {
+          case "PLAYER_JOINED":
+            handlePlayerJoinedEvent(response.data);
+            break;
+          case "PLAYER_LEFT":
+            handlePlayerLeftEvent(response.data);
+            break;
+          case "GAME_STARTED":
+            handleGameStartedEvent(response.data);
+            break;
+          case "NEXT_QUESTION":
+            handleNextQuestion(response.data);
+            break;
+        }
+      });
+    }
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [connected]);
 
   return (
     <>
@@ -136,17 +157,11 @@ export const GameFlowManager = () => {
           <LobbyPage
             pin={gameSession?.pin}
             playersUsername={playerUsernames}
-            onStart={() => {
-              clientRef.current?.publish({
-                destination: `/app/session/${gameSessionId}/start`,
-                body: JSON.stringify({}),
-              });
-              
-            }}
+            onStart={onStart}
           />
         </DashboardLayout>
       )}
-      {(stage === "game" && questionData ) && <GamePage  question={questionData} />}
+      {stage === "game" && questionData && <GamePage key={questionData.id} question={questionData} />}
     </>
   );
 };

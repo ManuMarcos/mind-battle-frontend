@@ -33,7 +33,7 @@ export const LobbyPage = ({pin , playersUsername, onStart} : LobbyPageProps) => 
             <FontAwesomeIcon icon={faUser} size="xl"/>
             <span className="ml-1">{playersUsername.length}</span>
           </div>
-          <button onClick={onStart} className="bg-primary hover:border-cyan-300 hover:border-2 text-white font-bold py-2 px-6 rounded-md shadow-md cursor-pointer">
+          <button onClick={onStart} className="bg-primary   text-white font-bold py-2 px-6 rounded-md shadow-md cursor-pointer">
             Iniciar
           </button>
         </div>

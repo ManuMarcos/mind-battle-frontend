@@ -53,18 +53,27 @@ export const AnswerButton = ({
       onClick={() => onSelect(optionId)}
       disabled={selectedOptionId !== null || showCorrect}
       className={twMerge(
-        `w-full flex items-center justify-between gap-4 px-4 py-3 rounded-lg text-left text-white font-semibold transition-colors`,
+        `w-full flex items-center justify-between gap-4 px-4 py-3 rounded-lg 
+        text-left text-white font-semibold transition-colors cursor-pointer`,
         baseColor
       )}
     >
-      <div className="flex items-center gap-3">
-        <FontAwesomeIcon icon={icon} size="lg" />
-        <span className="text-lg">{text}</span>
+      <div className="flex flex-row w-full justify-between items-center gap-3">
+        <div>
+          <FontAwesomeIcon icon={icon} size="lg" />
+          <span className="text-lg ml-3">{text}</span>
+        </div>
+        <div className="flex flex-row">
+          {isSelected && !isCorrect && showCorrect && <p className="mr-3">Tu elección😔</p>}
+          {iconFeedback && (
+            <FontAwesomeIcon
+              icon={iconFeedback}
+              size="lg"
+              className="text-white mr-3"
+            />
+          )}
+        </div>
       </div>
-
-      {iconFeedback && (
-        <FontAwesomeIcon icon={iconFeedback} size="lg" className="text-white" />
-      )}
     </button>
   );
 };
