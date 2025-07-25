@@ -23,7 +23,6 @@ export type Option = {
 export type QuizForm = {
     title: string;
     description: string;
-    createdBy: string;
     questions: QuestionForm[];
 }
 
@@ -43,7 +42,6 @@ export type OptionForm = {
 export type QuizRequest = {
     title: string;
     description: string;
-    createdBy: string;
     questions: {
         text: string;
         timeLimitSeconds: number;
@@ -58,7 +56,6 @@ export const mapQuizFormToRequest = (form: QuizForm): QuizRequest => {
     return {
       title: form.title,
       description: form.description,
-      createdBy: form.createdBy,
       questions: form.questions.map(q => ({
         text: q.text,
         timeLimitSeconds: q.timeLimitSeconds,

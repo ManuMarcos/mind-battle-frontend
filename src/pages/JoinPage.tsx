@@ -3,7 +3,7 @@ import { AuthModal } from "@/components/AuthModal";
 import { JoinGameForm } from "@/components/JoinGameForm";
 import { LoginForm } from "@/components/LoginForm";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/ui/logo";
+import { Logo } from "@/components/logo";
 import { useAuth } from "@/hooks/useAuth";
 import type { GameSession } from "@/types";
 import axios from "axios";

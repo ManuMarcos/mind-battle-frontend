@@ -86,7 +86,7 @@ export const LoginForm = ({ onSuccess } : LoginFormProps) => {
             <FormItem>
               <FormLabel>Contraseña</FormLabel>
               <FormControl>
-                <Input placeholder="Tu contraseña" {...field} />
+                <Input type="password" placeholder="Tu contraseña" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

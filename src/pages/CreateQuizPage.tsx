@@ -5,13 +5,14 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
-import { mapQuizFormToRequest, type OptionForm, type QuestionForm } from "@/types/Quiz";
+import { mapQuizFormToRequest, type QuestionForm } from "@/types/quiz";
 import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Label } from "@radix-ui/react-label";
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 
 const initialOptions: QuestionForm = {
   id: "",
@@ -25,9 +26,10 @@ const initialOptions: QuestionForm = {
   timeLimitSeconds: 30,
 };
 
+
 export const CreateQuizPage = () => {
   //Sacar luego
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [quizTitle, setQuizTitle] = useState("");
   const [quizDescr, setQuizDescr] = useState("");
   const [questions, setQuestions] = useState<QuestionForm[]>([]);
@@ -43,7 +45,13 @@ export const CreateQuizPage = () => {
       toast.error("Error", {
         description: "Por favor completa la pregunta y todas las opciones",
       });
-    } else if (questions.length >= 20) {
+    }
+    else if(currentQuestion.options.every((option) => option.correct === false)){
+      toast.error("Error", {
+        description: "Alguna de las opciones tiene que estar seleccionada como la correcta"
+      })
+    }
+    else if (questions.length >= 20) {
       toast.error("Error", {
         description: "Máximo 20 preguntas por quiz",
       });
@@ -67,14 +75,43 @@ export const CreateQuizPage = () => {
     });
   };
 
-  const saveQuiz = () => {
-    api.post("/quizzes", mapQuizFormToRequest({
-      title: quizTitle,
-      description: quizDescr,
-      questions: questions,
-      createdBy: "prueba"
-    }));
-    toast.success("llamando a guardar quiz");
+  const cleanForm = () => {
+    setQuizTitle("");
+    setQuizDescr("");
+    setQuestions([]);
+    setCurrentQuestion(initialOptions);
+  }
+
+
+  const saveQuiz = async () => {
+    if (questions.length === 0) {
+      toast.error("Error", {
+        description: "Por favor agregue al menos una pregunta",
+      });
+    } else {
+      try {
+        await api.post(
+          "/quizzes",
+          mapQuizFormToRequest({
+            title: quizTitle,
+            description: quizDescr,
+            questions: questions,
+          })
+        );
+        toast.success("Quizz creada exitosamente");
+        cleanForm();
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const status = error.response?.status;
+          const message = error.response?.data.message;
+          toast.error("Error al crear Quiz", {
+            description: status + " - " + message,
+          });
+        } else {
+          toast.error("Error inesperado");
+        }
+      }
+    }
   };
 
   const updateOption = (index: number, value: string) => {
@@ -85,6 +122,7 @@ export const CreateQuizPage = () => {
 
   return (
     <div className=" bg-gradient-to-br ">
+      <Toaster richColors />
       <div className="container mx-auto p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -167,7 +205,9 @@ export const CreateQuizPage = () => {
                 <Label>Opciones de respuesta</Label>
                 <RadioGroup
                   value={
-                    currentQuestion.options.find((opt) => opt.correct)?.id.toString() ?? ""
+                    currentQuestion.options
+                      .find((opt) => opt.correct)
+                      ?.id.toString() ?? ""
                   }
                   onValueChange={(value) => {
                     console.log("Seleccionado:", value);

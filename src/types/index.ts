@@ -1,4 +1,4 @@
-import type { Option, Quiz } from "./Quiz"
+import type { Option, Quiz } from "./quiz"
 
 export type GameSession = {
     id : string,
@@ -10,6 +10,15 @@ export type GameSession = {
     players : PlayerSession[]
 }
 
+export type PaginatedResponse<T> = {
+    content : T[],
+    page: {
+        size: number,
+        number: number,
+        totalElements: number,
+        totalPages : number
+    }
+}
 
 
 export type PlayerSession = {

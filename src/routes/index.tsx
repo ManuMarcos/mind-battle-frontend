@@ -1,4 +1,3 @@
-
 import { CenteredLayout } from "@/components/CenteredLayout";
 import { DashboardLayout } from "@/components/DashBoardLayout";
 import { WebSocketProvider } from "@/context/WebSocketProvider";
