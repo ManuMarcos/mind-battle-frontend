@@ -1,9 +1,5 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
-import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import {
   Form,
   FormControl,
@@ -11,13 +7,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import api from "@/api/axios";
-import type { LoginResponse } from "@/types";
-import axios from "axios";
-import { useAuth } from "@/hooks/useAuth";
-
+} from "./ui/form";
+import { Input } from "./ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
 
 const FormSchema = z.object({
   username: z.string().min(1, {
@@ -26,46 +19,41 @@ const FormSchema = z.object({
   password: z.string().min(1, {
     message: "Debe ingresar una contraseña",
   }),
+  email: z.string().email({
+    message: "Mail invalido"
+  })
 });
 
-interface LoginFormProps {
-  onSuccess : () => void;
-}
-
-export const LoginForm = ({ onSuccess } : LoginFormProps) => {
-  const {login} = useAuth();
+export const SignUpForm = () => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      email: "",
       username: "",
       password: "",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-      try{
-        const response = await api.post<LoginResponse>("/auth/login", {
-          username: data.username,
-          password: data.password
-        });
-        login(response.data.token, data.username);
-      }  
-      catch(error){
-          if(axios.isAxiosError(error)){
-            const status = error.response?.status;
-            const message = error.response?.data.message;
-            console.error("Error HTTP: ", status, message);
-          }
-          else{
-            console.error("Error inesperado: ", error)
-          }
-      }
-      onSuccess();
-  }
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    console.log(data);
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 space-y-6">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Correo Electrónico</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="tu@email.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="username"
@@ -92,7 +80,9 @@ export const LoginForm = ({ onSuccess } : LoginFormProps) => {
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit">Iniciar Sesión</Button>
+        <Button className="w-full" type="submit">
+          Crear Cuenta
+        </Button>
       </form>
     </Form>
   );

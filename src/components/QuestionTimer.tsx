@@ -9,7 +9,7 @@ type QuestionTimerProps = {
   timeLimitSeconds: number;
   stats: QuestionStats[];
   onTimeUp: () => void;
-  onNextQuestion : () => void;  
+  onNextQuestion: () => void;
 };
 
 export const QuestionTimer = ({
@@ -17,7 +17,7 @@ export const QuestionTimer = ({
   timeLimitSeconds,
   onTimeUp,
   onNextQuestion,
-  stats
+  stats,
 }: QuestionTimerProps) => {
   const [timeLeft, setTimeLeft] = useState<number>(timeLimitSeconds);
   const sessionId = sessionStorage.getItem("gameSessionId");
@@ -47,9 +47,11 @@ export const QuestionTimer = ({
           {timeLeft}
         </div>
       </div>
-      <AnswerStats stats={stats}/>
+      <AnswerStats stats={stats} />
       <div className="grid grid-cols-1 grid-rows-[2fr_3fr]  mr-2">
-        <Button onClick={onNextQuestion} className="mt-1 cursor-pointer">Siguiente</Button>
+        <Button onClick={onNextQuestion} className="mt-1 cursor-pointer">
+          Siguiente
+        </Button>
         {sessionId && <AnswerResponsesCounter sessionId={sessionId} />}
       </div>
     </div>

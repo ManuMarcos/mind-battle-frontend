@@ -57,7 +57,7 @@ export const GameFlowManager = () => {
 
   const onStart = async () => {
     try {
-      const jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2ODRjOGUyNTA3Y2NlYWJiOWEwZmI1ZWQiLCJpYXQiOjE3NTAzNTQyNDIsImV4cCI6MTc1MDM2ODY0Mn0.tTr-d4BXbLDhYx7YyBjOkOO1kBhZwoRXAdHr70Cgv4U"
+      const jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2ODRjOGUyNTA3Y2NlYWJiOWEwZmI1ZWQiLCJpYXQiOjE3NTIyODU0OTcsImV4cCI6MTc1MjI5OTg5N30.IHyxg5K5veoBl0LRqFmtCQoc8O9m1NjU2MIGrc6Udds"
       const response = await fetch(
         `${API_BASE_URL}/api/sessions/${gameSessionId}/start`,
         {

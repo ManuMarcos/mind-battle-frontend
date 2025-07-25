@@ -1,3 +1,4 @@
+import type { Option, Quiz } from "./Quiz"
 
 export type GameSession = {
     id : string,
@@ -9,26 +10,7 @@ export type GameSession = {
     players : PlayerSession[]
 }
 
-export type Quiz = {
-    id : string,
-    title : string,
-    description : string,
-    createdBy : string,
-    questions : Question[]
-}
 
-export type Question = {
-    id : string,
-    text : string,
-    timeLimitSeconds : number,
-    options: Option[]
-}
-
-export type Option = {
-    id : string,
-    text : string,
-    correct : boolean
-}
 
 export type PlayerSession = {
     userId : string,
@@ -76,3 +58,6 @@ export type AnswerRequest = {
     selectedOptionId: string
 }
 
+export type LoginResponse = {
+    token : string
+}
