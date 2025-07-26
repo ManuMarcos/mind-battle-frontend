@@ -1,5 +1,6 @@
 import api from "@/api/axios";
 import { PageHeader } from "@/components/PageHeader";
+import { QuizCard } from "@/components/QuizCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,14 +28,15 @@ export const QuizzesPage = () => {
       .then(({ data }) => {
         setQuizzes(data.content);
       })
-      .catch((error : AxiosError) => {
-        if(error.response){
-          console.error("Respuesta del servidor con error: ", error.response.data)
-        }
-        else if(error.request){
+      .catch((error: AxiosError) => {
+        if (error.response) {
+          console.error(
+            "Respuesta del servidor con error: ",
+            error.response.data
+          );
+        } else if (error.request) {
           console.error("No hubo respuesta del servidor: ", error.request);
-        }
-        else{
+        } else {
           console.log("Error desconocido", error);
         }
       });
@@ -48,7 +50,10 @@ export const QuizzesPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-400 to-purple-400">
       <div className="container mx-auto p-6">
         {/* Header */}
-        <PageHeader title="Quizzes Disponibles" handleBack={() => navigate('/')}/>
+        <PageHeader
+          title="Quizzes Disponibles"
+          handleBack={() => navigate("/")}
+        />
 
         {/* Search */}
         <div className="max-w-md mb-8">
@@ -67,52 +72,16 @@ export const QuizzesPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredQuizzes &&
             filteredQuizzes.map((quiz) => (
-              <Card
-                key={quiz.id}
-                className="bg-white/95 backdrop-blur hover:bg-white transition-colors"
-              >
-                <CardHeader>
-                  <CardTitle className="text-lg">{quiz.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="bg-violet-300">
-                  <p className="text-sm  bg-red-300 text-muted-foreground mb-4">
-                    {quiz.description}
-                  </p>
-
-                  <div className="flex gap-2 mb-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      {quiz.questions?.length} #preguntas
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />~{0} min
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground mb-4">
-                    Creado por: {quiz.createdBy}
-                  </p>
-
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedQuiz(quiz.id)}
-                      className="flex-1"
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      Ver Preguntas
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => console.log("LLamando a crear Partida")}
-                      className="flex-1"
-                    >
-                      <Play className="h-4 w-4 mr-1" />
-                      Crear Sala
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <QuizCard
+                id={quiz.id}
+                title={quiz.title}
+                description={quiz.description}
+                numberOfQuestions={quiz.questions.length}
+                avgTime={0}
+                createdBy={quiz.createdBy}
+                onShowQuestions={() => navigate(`/quizzes/${quiz.id}`)}
+                onCreateLobby={() => console.log("Create Lobby")}
+              />
             ))}
         </div>
 

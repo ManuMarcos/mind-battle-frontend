@@ -5,6 +5,7 @@ import { useAuth} from "@/hooks/useAuth";
 import { CreateQuizPage } from "@/pages/CreateQuizPage";
 import { GameFlowManager } from "@/pages/GameFlowManager";
 import { JoinPage } from "@/pages/JoinPage";
+import { QuizDetailsPage } from "@/pages/QuizDetailsPage";
 import { QuizzesPage } from "@/pages/QuizzesPage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -25,6 +26,10 @@ export const Routes = () => {
         {
             path: "/quizzes",
             element: <QuizzesPage/>
+        },
+        {
+            path: "/quizzes/:id",
+            element: <QuizDetailsPage/>
         },
         {
             path: "/createQuiz",

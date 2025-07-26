@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
+
 
 const api = axios.create({
     baseURL : 'http://localhost:8080/api',
@@ -11,7 +13,10 @@ api.interceptors.request.use(
     (config) => {
         const accessToken = localStorage.getItem('accessToken');
         if(accessToken){
-            config.headers.Authorization = `Bearer ${accessToken}`;
+            const decodedToken = jwtDecode(accessToken);
+            if(decodedToken.exp && decodedToken.exp > Math.floor(Date.now() / 1000)){
+                config.headers.Authorization = `Bearer ${accessToken}`;
+            }
         }
         return config;
     },
