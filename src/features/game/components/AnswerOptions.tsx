@@ -1,4 +1,4 @@
-import type { Option } from "@/types";
+
 import {
   faCircle,
   faHeart,
@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { AnswerButton } from "./AnswerButton";
 import { useWebSocket } from "@/context/WebSocketProvider";
+import type { Option } from "@/types/quiz";
 
 const icons = [
   { icon: faHeart, color: "bg-red-500" },

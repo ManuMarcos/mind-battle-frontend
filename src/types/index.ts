@@ -1,13 +1,21 @@
+import { GameResults } from "@/features/game/components/GameResults"
 import type { Option, Quiz } from "./quiz"
 
 export type GameSession = {
     id : string,
+    name : string,
     pin : string,
     status : string,
     currentQuestionIndex : number,
+    createdBy : string,
     questionStartTime : Date,
     quiz : Quiz,
     players : PlayerSession[]
+}
+
+export type GameSessionRequest = {
+    name: string,
+    quizId: string
 }
 
 export type PaginatedResponse<T> = {
@@ -59,7 +67,8 @@ export type EventMessage =
     | {event:  "GAME_STARTED", data: QuestionData}
     | {event:  "ANSWER_RECEIVED", data: AnswerReceived}
     | {event:  "QUESTION_END", data: QuestionStats[]}
-    | {event:  "NEXT_QUESTION", data: QuestionData};
+    | {event:  "NEXT_QUESTION", data: QuestionData}
+    | {event:  "SHOW_RESULTS" , data: PlayerResult[]};
 
 export type AnswerRequest = {
     username : string,
@@ -69,4 +78,11 @@ export type AnswerRequest = {
 
 export type LoginResponse = {
     token : string
+}
+
+export type PlayerResult = {
+    username : string,
+    score : number,
+    correctAnswers : number,
+    totalQuestions : number
 }

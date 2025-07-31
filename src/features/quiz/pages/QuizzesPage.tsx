@@ -47,14 +47,13 @@ export const QuizzesPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-400 to-purple-400">
+    <div className="min-h-screen">
       <div className="container mx-auto p-6">
         {/* Header */}
         <PageHeader
           title="Quizzes Disponibles"
-          handleBack={() => navigate("/")}
+          handleBack={() => navigate(-1)}
         />
-
         {/* Search */}
         <div className="max-w-md mb-8">
           <div className="relative">
@@ -80,15 +79,27 @@ export const QuizzesPage = () => {
                 avgTime={0}
                 createdBy={quiz.createdBy}
                 onShowQuestions={() => navigate(`/quizzes/${quiz.id}`)}
-                onCreateLobby={() => console.log("Create Lobby")}
+                onCreateLobby={() =>
+                  navigate("/create-game", {
+                    state: { selectedQuiz: quiz },
+                  })
+                }
               />
             ))}
         </div>
 
-        {filteredQuizzes.length === 0 && (
+        {filteredQuizzes.length === 0 && quizzes.length > 0 && (
           <div className="text-center py-12">
-            <p className="text-white text-lg">
+            <p className="text-lg">
               No se encontraron quizzes que coincidan con tu búsqueda
+            </p>
+          </div>
+        )}
+
+        {quizzes.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-lg">
+              No hay quizzes disponibles en este momento.
             </p>
           </div>
         )}

@@ -34,7 +34,7 @@ export const UserDropdown = () => {
             <DropdownMenuLabel>{user}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate("/quizzes")}>Crear Partida</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate('/createQuiz')}>Crear Quizz</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/create-quiz')}>Crear Quizz</DropdownMenuItem>
             <DropdownMenuItem onClick={() => onLogOut()}>Cerrar Sesión</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

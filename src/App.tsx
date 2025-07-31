@@ -9,7 +9,7 @@ function App() {
 
   return (
     <AuthProvider>
-      <Toaster/>
+      <Toaster richColors/>
       <Routes/>
     </AuthProvider>
   );

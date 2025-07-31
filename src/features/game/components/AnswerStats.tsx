@@ -1,6 +1,4 @@
 import type { QuestionStats } from "@/types";
-import { ChartContainer } from "./ui/chart";
-import { Bar, BarChart, XAxis } from "recharts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle, faHeart, faMoon, faStar } from "@fortawesome/free-solid-svg-icons";
 

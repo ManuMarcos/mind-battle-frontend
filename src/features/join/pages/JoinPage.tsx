@@ -2,8 +2,8 @@ import api from "@/api/axios";
 import { AuthModal } from "@/components/AuthModal";
 import { JoinGameForm } from "@/components/JoinGameForm";
 import { LoginForm } from "@/components/LoginForm";
+import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/logo";
 import { useAuth } from "@/hooks/useAuth";
 import type { GameSession } from "@/types";
 import axios from "axios";
@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 export const JoinPage = () => {
   const navigate = useNavigate();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleJoinGame = async (formData: {
     enteredUsername: string;

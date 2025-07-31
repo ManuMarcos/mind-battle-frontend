@@ -1,11 +1,17 @@
 import api from "@/api/axios";
+import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
-import { mapQuizFormToRequest, type QuestionForm } from "@/types/quiz";
+import {
+  mapQuizFormToRequest,
+  type Quiz,
+  type QuestionForm,
+} from "@/types/quiz";
+import { handleApiError } from "@/utils/handleApiError";
 import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Label } from "@radix-ui/react-label";
@@ -26,7 +32,6 @@ const initialOptions: QuestionForm = {
   timeLimitSeconds: 30,
 };
 
-
 export const CreateQuizPage = () => {
   //Sacar luego
   const { user } = useAuth();
@@ -45,13 +50,14 @@ export const CreateQuizPage = () => {
       toast.error("Error", {
         description: "Por favor completa la pregunta y todas las opciones",
       });
-    }
-    else if(currentQuestion.options.every((option) => option.correct === false)){
+    } else if (
+      currentQuestion.options.every((option) => option.correct === false)
+    ) {
       toast.error("Error", {
-        description: "Alguna de las opciones tiene que estar seleccionada como la correcta"
-      })
-    }
-    else if (questions.length >= 20) {
+        description:
+          "Alguna de las opciones tiene que estar seleccionada como la correcta",
+      });
+    } else if (questions.length >= 20) {
       toast.error("Error", {
         description: "Máximo 20 preguntas por quiz",
       });
@@ -80,8 +86,7 @@ export const CreateQuizPage = () => {
     setQuizDescr("");
     setQuestions([]);
     setCurrentQuestion(initialOptions);
-  }
-
+  };
 
   const saveQuiz = async () => {
     if (questions.length === 0) {
@@ -89,28 +94,23 @@ export const CreateQuizPage = () => {
         description: "Por favor agregue al menos una pregunta",
       });
     } else {
-      try {
-        await api.post(
+      api
+        .post<Quiz>(
           "/quizzes",
           mapQuizFormToRequest({
             title: quizTitle,
             description: quizDescr,
             questions: questions,
           })
-        );
-        toast.success("Quizz creada exitosamente");
-        cleanForm();
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const status = error.response?.status;
-          const message = error.response?.data.message;
-          toast.error("Error al crear Quiz", {
-            description: status + " - " + message,
-          });
-        } else {
-          toast.error("Error inesperado");
-        }
-      }
+        )
+        .then((response) => {
+          if (response.status === 201) {
+            toast.success("Quizz creada exitosamente");
+            cleanForm();
+            navigate(`/quizzes/${response.data.id}`);
+          }
+        })
+        .catch(handleApiError);
     }
   };
 
@@ -124,26 +124,15 @@ export const CreateQuizPage = () => {
     <div className=" bg-gradient-to-br ">
       <Toaster richColors />
       <div className="container mx-auto p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => navigate("/")}
-              className="bg-white/30 border-black/25 hover:bg-white/30"
-            >
-              <FontAwesomeIcon icon={faArrowLeft} />
+        <PageHeader
+          handleBack={() => navigate(-1)}
+          title="Crear Quiz"
+          rightButton={
+            <Button onClick={saveQuiz} className="text-white cursor-pointer">
+              Guardar Quiz
             </Button>
-            <h1 className="text-3xl font-bold">Crear Quiz</h1>
-          </div>
-          <Button
-            onClick={saveQuiz}
-            className="bg-white text-primary cursor-pointer hover:bg-white/90"
-          >
-            Guardar Quiz
-          </Button>
-        </div>
+          }
+        />
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Formulario de nueva pregunta */}

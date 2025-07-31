@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export const DashboardLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-amber-100 to-amber-300">
+    <div className="min-h-screen flex flex-col">
       
       <main className="flex-grow p-6 ">{children}</main>
 

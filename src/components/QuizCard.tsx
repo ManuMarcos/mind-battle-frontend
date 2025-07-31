@@ -29,7 +29,8 @@ export const QuizCard = ({
   numberOfQuestions,
   avgTime,
   createdBy,
-  onShowQuestions
+  onShowQuestions,
+  onCreateLobby
 }: QuizCardProps) => {
   return (
     <Card
@@ -67,7 +68,7 @@ export const QuizCard = ({
           </Button>
           <Button
             size="sm"
-            onClick={() => console.log("LLamando a crear Partida")}
+            onClick={onCreateLobby}
             className="flex-1"
           >
             <Play className="h-4 w-4 mr-1" />
