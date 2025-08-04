@@ -1,19 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { PlayerResult } from "@/types";
 import { Award, Home, Medal, RotateCcw, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-// Mock data - esto vendría de la base de datos
 const mockResults = [
-  { id: 1, username: "Juan123", score: 85, correctAnswers: 17, totalQuestions: 20 },
-  { id: 2, username: "Maria_Gamer", score: 75, correctAnswers: 15, totalQuestions: 20 },
-  { id: 3, username: "Carlos_Pro", score: 70, correctAnswers: 14, totalQuestions: 20 },
-  { id: 4, username: "Ana_Quiz", score: 60, correctAnswers: 12, totalQuestions: 20 },
-  { id: 5, username: "Luis_Smart", score: 45, correctAnswers: 9, totalQuestions: 20 },
+  { username: "Juan123", score: 85, correctAnswers: 17, totalQuestions: 20 },
+  { username: "Maria_Gamer", score: 75, correctAnswers: 15, totalQuestions: 20 },
+  { username: "Carlos_Pro", score: 70, correctAnswers: 14, totalQuestions: 20 },
+  { username: "Ana_Quiz", score: 60, correctAnswers: 12, totalQuestions: 20 },
+  { username: "Luis_Smart", score: 45, correctAnswers: 9, totalQuestions: 20 },
 ];
 
+type GameResultsProps = {
+    gameResults : PlayerResult[] 
+}
 
-export const GameResults = () => {
+export const GameResults = ({gameResults} : GameResultsProps) => {
   const navigate = useNavigate();
 
   const getRankIcon = (position: number) => {
@@ -23,7 +26,7 @@ export const GameResults = () => {
       case 2:
         return <Medal className="h-6 w-6 text-gray-400" />;
       case 3:
-        return <Award className="h-6 w-6 text-amber-600" />;
+        return <Award className="h-6 w-6 text-white"  />;
       default:
         return <span className="font-bold text-lg">{position}</span>;
     }
@@ -32,11 +35,11 @@ export const GameResults = () => {
   const getRankBg = (position: number) => {
     switch (position) {
       case 1:
-        return "bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200";
+        return "bg-gradient-to-r from-yellow-200 to-yellow-300 border-yellow-200";
       case 2:
-        return "bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200";
+        return "bg-gradient-to-r from-gray-200 to-gray-300 border-gray-200";
       case 3:
-        return "bg-gradient-to-r from-amber-50 to-amber-100 border-amber-200";
+        return "bg-gradient-to-r from-amber-500/50 to-amber-600 border-amber-200";
       default:
         return "bg-card";
     }
@@ -60,9 +63,9 @@ export const GameResults = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {mockResults.map((player, index) => (
+            {gameResults.map((player, index) => (
               <div
-                key={player.id}
+                key={index}
                 className={`flex items-center justify-between p-4 rounded-lg border transition-all hover:shadow-md ${getRankBg(index + 1)}`}
               >
                 <div className="flex items-center gap-4">
@@ -87,15 +90,7 @@ export const GameResults = () => {
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            onClick={() => navigate("/create-room")}
-            className="flex items-center gap-2"
-            size="lg"
-          >
-            <RotateCcw className="h-5 w-5" />
-            Nueva Partida
-          </Button>
-          <Button
+            <Button
             variant="outline"
             onClick={() => navigate("/")}
             className="flex items-center gap-2"

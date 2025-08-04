@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Quiz } from "@/types/quiz";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AxiosError } from "axios";
 import { ArrowLeft, Clock, Hash, Play } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -59,7 +61,8 @@ export const QuizDetailsPage = () => {
                         {quiz.questions.length} preguntas
                       </Badge>
                       <Badge>
-                        <Clock className="h-3 w-3 mr-1" />~{} min
+                        <Clock className="h-3 w-3 mr-1" />~
+                        {(quiz.totalTime / 60).toFixed(2)} min
                       </Badge>
                     </div>
                   </div>
@@ -83,9 +86,15 @@ export const QuizDetailsPage = () => {
               {quiz.questions.map((question, index) => (
                 <Card key={index} className="bg-white/95 backdrop-blur">
                   <CardContent className="p-6">
-                    <h3 className="font-semibold mb-4">
-                      Pregunta {index + 1}: {question.text}
-                    </h3>
+                    <div className="flex flex-row justify-between">
+                      <h3 className="font-semibold mb-4">
+                        Pregunta {index + 1}: {question.text}
+                      </h3>
+                      <h6 className="text-sm">
+                        <FontAwesomeIcon icon={faClock} className="mr-1" />
+                        {`${question.timeLimitSeconds} seg`}
+                      </h6>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {question.options.map((option, optionIndex) => (
                         <div

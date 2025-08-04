@@ -67,15 +67,7 @@ export const Routes = () => {
           </DashboardLayout>
         </AppLayout>
       ),
-    },
-    {
-      path: "/dev/show-results",
-      element: (
-        <AppLayout>
-          <GameResults/>
-        </AppLayout>
-      ),
-    },
+    }
   ];
 
   const authenticatedOnlyRoutes = [{}];

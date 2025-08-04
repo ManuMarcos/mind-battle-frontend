@@ -177,7 +177,7 @@ export const CreateGamePage = () => {
                       {selectedQuiz.questions.length}
                     </p>
                     <p>
-                      <strong>Duración estimada:</strong> {0} minutos
+                      <strong>Duración estimada:</strong> {(selectedQuiz.totalTime/60).toFixed(2)} minutos
                     </p>
                   </div>
                 </CardContent>

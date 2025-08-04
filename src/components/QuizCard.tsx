@@ -10,49 +10,40 @@ import {
 import { Button } from "./ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faHashtag } from "@fortawesome/free-solid-svg-icons";
+import type { Quiz } from "@/types/quiz";
 
 type QuizCardProps = {
-  id: string;
-  title: string;
-  description: string;
-  numberOfQuestions: number;
-  avgTime: number;
-  createdBy: string;
+  quiz : Quiz
   onShowQuestions: () => void;
   onCreateLobby: () => void;
 };
 
 export const QuizCard = ({
-  id,
-  title,
-  description,
-  numberOfQuestions,
-  avgTime,
-  createdBy,
+  quiz,
   onShowQuestions,
   onCreateLobby
 }: QuizCardProps) => {
   return (
     <Card
-      key={id}
+      key={quiz.id}
       className="bg-white/95 backdrop-blur hover:bg-white transition-colors"
     >
       <CardHeader>
-        <CardTitle className="text-lg">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="text-lg">{quiz.title}</CardTitle>
+        <CardDescription>{quiz.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex text-sm flex-row gap-3 text-muted-foreground">
           <span>
             <FontAwesomeIcon icon={faHashtag} />
-            {numberOfQuestions} preguntas
+            {quiz.questions.length} preguntas
           </span>
           <span>
-            <FontAwesomeIcon icon={faClock} /> ~{avgTime}
+            <FontAwesomeIcon icon={faClock} /> ~{quiz.totalTime}
           </span>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
-          Creado por: {createdBy}
+          Creado por: {quiz.createdBy}
         </p>
       </CardContent>
       <CardFooter>

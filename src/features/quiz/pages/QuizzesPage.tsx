@@ -72,12 +72,7 @@ export const QuizzesPage = () => {
           {filteredQuizzes &&
             filteredQuizzes.map((quiz) => (
               <QuizCard
-                id={quiz.id}
-                title={quiz.title}
-                description={quiz.description}
-                numberOfQuestions={quiz.questions.length}
-                avgTime={0}
-                createdBy={quiz.createdBy}
+                quiz={quiz}
                 onShowQuestions={() => navigate(`/quizzes/${quiz.id}`)}
                 onCreateLobby={() =>
                   navigate("/create-game", {

@@ -4,6 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -12,15 +19,16 @@ import {
   type QuestionForm,
 } from "@/types/quiz";
 import { handleApiError } from "@/utils/handleApiError";
-import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faClock, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Label } from "@radix-ui/react-label";
 import axios from "axios";
+import { Clock } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 
-const initialOptions: QuestionForm = {
+const createEmptyQuestion = (): QuestionForm => ({
   id: "",
   text: "",
   options: [
@@ -29,8 +37,8 @@ const initialOptions: QuestionForm = {
     { id: 2, text: "", correct: false },
     { id: 3, text: "", correct: false },
   ],
-  timeLimitSeconds: 30,
-};
+  timeLimitSeconds: 15,
+});
 
 export const CreateQuizPage = () => {
   //Sacar luego
@@ -39,8 +47,13 @@ export const CreateQuizPage = () => {
   const [quizDescr, setQuizDescr] = useState("");
   const [questions, setQuestions] = useState<QuestionForm[]>([]);
   const [currentQuestion, setCurrentQuestion] =
-    useState<QuestionForm>(initialOptions);
+    useState<QuestionForm>(createEmptyQuestion());
+  const questionTimes = [];
   const navigate = useNavigate();
+
+  for (let i = 5; i <= 60; i += 5) {
+    questionTimes.push(i);
+  }
 
   const addQuestion = () => {
     if (
@@ -67,7 +80,7 @@ export const CreateQuizPage = () => {
         id: Date.now().toString(),
       };
       setQuestions([...questions, newQuestion]);
-      setCurrentQuestion(initialOptions);
+      setCurrentQuestion(createEmptyQuestion());
       toast.success("Pregunta agregada", {
         description: `Pregunta ${questions.length + 1} agregada correctamente`,
       });
@@ -85,7 +98,7 @@ export const CreateQuizPage = () => {
     setQuizTitle("");
     setQuizDescr("");
     setQuestions([]);
-    setCurrentQuestion(initialOptions);
+    setCurrentQuestion(createEmptyQuestion());
   };
 
   const saveQuiz = async () => {
@@ -112,6 +125,13 @@ export const CreateQuizPage = () => {
         })
         .catch(handleApiError);
     }
+  };
+
+  const onTimeSelected = (value: string) => {
+    setCurrentQuestion({
+      ...currentQuestion,
+      timeLimitSeconds: Number(value),
+    });
   };
 
   const updateOption = (index: number, value: string) => {
@@ -187,6 +207,26 @@ export const CreateQuizPage = () => {
                   placeholder="Escribe tu pregunta aquí..."
                   className="bg-background min-h-[100px]"
                 />
+              </div>
+              <div className="flex flex-row items-center justify-between gap-2">
+                <Label className="h-10 flex items-center mr-5">
+                  Tiempo de respuesta
+                </Label>
+                <Select
+                  onValueChange={onTimeSelected}
+                  defaultValue={"15"}
+                >
+                  <SelectTrigger className="w-[180px] h-10 flex items-center grow">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {questionTimes.map((time) => (
+                      <SelectItem key={time} value={time.toString()}>
+                        {`${time} segundos`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Opciones */}
@@ -269,36 +309,47 @@ export const CreateQuizPage = () => {
                 <div className="space-y-4 max-h-[600px] overflow-y-auto">
                   {questions.map((question, index) => (
                     <Card key={question.id} className="border border-border">
-                      <CardContent className="p-3">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1 bg-green">
-                            <h4 className="font-medium mb-2">
-                              {index + 1}. {question.text}
-                            </h4>
-                            <div className="space-y-1">
-                              {question.options.map((option, optIndex) => (
-                                <div
-                                  key={optIndex}
-                                  className={`text-sm p-2 rounded ${
-                                    option.correct
-                                      ? "bg-green-100 text-green-800 font-medium"
-                                      : "bg-muted"
-                                  }`}
-                                >
-                                  {option.correct && "✓ "}
-                                  {option.text}
-                                </div>
-                              ))}
+                      <CardContent>
+                        <div className="flex flex-row">
+                          <div className="flex-3/4">
+                            <div className="flex-col bg-green">
+                              <div className="flex flex-row font-medium justify-between">
+                                <h4 className="flex items-center mb-2">
+                                  {index + 1}. {question.text}
+                                </h4>
+                                <h6 className="text-sm">
+                                  <FontAwesomeIcon icon={faClock} className="mr-1"/>
+                                  {question.timeLimitSeconds}
+                                </h6>
+                              </div>
+
+                              <div className="space-y-1">
+                                {question.options.map((option, optIndex) => (
+                                  <div
+                                    key={optIndex}
+                                    className={`text-sm p-2 rounded ${
+                                      option.correct
+                                        ? "bg-green-100 text-green-800 font-medium"
+                                        : "bg-muted"
+                                    }`}
+                                  >
+                                    {option.correct && "✓ "}
+                                    {option.text}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => removeQuestion(question.id)}
-                            className="shrink-0"
-                          >
-                            <FontAwesomeIcon icon={faTrash} />
-                          </Button>
+                          <div className="ml-3">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => removeQuestion(question.id)}
+                              className="bg-red-300 cursor-pointer hover:bg-red-500"
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>

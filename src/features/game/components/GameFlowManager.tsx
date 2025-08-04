@@ -37,6 +37,7 @@ export const GameFlowManager = () => {
   const [questionData, setQuestionData] = useState<QuestionData | null>(null); 
   const [stats, setGameStats] = useState<QuestionStats[] | null>(null);
   const [numberOfAnswers, setNumberOfAnswers] = useState<number>(0);
+  const [gameResults, setGameResults] = useState<PlayerResult[]>([]);
   const sessionInfo = getSessionInfo();
   const auth = useAuth();
   const { connected, subscribe, sendMessage } = useWebSocket();
@@ -107,6 +108,7 @@ export const GameFlowManager = () => {
   }
 
   const handleGameResults = (results : PlayerResult[]) => {
+    setGameResults(results);
     setStage("results");
   }
 
@@ -183,6 +185,7 @@ export const GameFlowManager = () => {
       )}
       {stage === "game" && questionData && (
         <GamePage
+          key={questionData.id}
           question={questionData}
           stats={stats}
           counter={numberOfAnswers}
@@ -193,7 +196,7 @@ export const GameFlowManager = () => {
         />
       )}
       {stage === "results" && (
-        <GameResults/>
+        <GameResults gameResults={gameResults}/>
       )}
       <Toaster richColors position="top-left" closeButton/>
     </>

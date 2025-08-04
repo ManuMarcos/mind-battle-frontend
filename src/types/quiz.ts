@@ -5,6 +5,7 @@ export type Quiz = {
     description : string,
     createdBy : string,
     questions : Question[]
+    totalTime: number
 }
 
 export type Question = {
